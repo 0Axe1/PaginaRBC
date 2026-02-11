@@ -76,7 +76,7 @@ try {
             $params[] = $fecha_inicio;
             $params[] = $fecha_fin;
         }
-        $sql .= " GROUP BY c.id_cliente, c.nombre_razon_social ORDER BY total_cantidad_pedida DESC";
+        $sql .= " GROUP BY c.id_cliente, c.nombre_razon_social, pr.nombre_producto ORDER BY total_cantidad_pedida DESC";
                   
         $stmt = $pdo->prepare($sql);
         $stmt->execute($params);
@@ -149,13 +149,16 @@ class PDF extends FPDF
     {
         $this->SetY(-15);
         $this->SetFont('Arial','I',8);
-        $this->Cell(0,10,utf8_decode('Página ') . $this->PageNo() . '/{nb}',0,0,'C');
+        $this->Cell(0,10,iconv('UTF-8', 'ISO-8859-1//TRANSLIT', 'Página ') . $this->PageNo() . '/{nb}',0,0,'C');
     }
 
     // Tabla de datos
     function GenerarTabla($header, $data, $anchos)
     {
         // Cabecera
+        $this->SetFillColor(224, 235, 255);
+        $this->SetTextColor(0);
+        $this->SetFont('Arial', 'B', 10);
         for($i=0; $i<count($header); $i++)
             $this->Cell($anchos[$i], 7, iconv('UTF-8', 'ISO-8859-1//TRANSLIT', $header[$i]), 1, 0, 'C', true);
         $this->Ln();

@@ -77,7 +77,8 @@ try {
             $params[] = $fecha_inicio;
             $params[] = $fecha_fin;
         }
-        $sql .= " GROUP BY c.id_cliente, c.nombre_razon_social
+        // CORRECCIÓN: Se agrega pr.nombre_producto al GROUP BY para compatibilidad con SQL estricto
+        $sql .= " GROUP BY c.id_cliente, c.nombre_razon_social, pr.nombre_producto
                   ORDER BY total_cantidad_pedida DESC, c.nombre_razon_social";
                   
         $stmt = $pdo->prepare($sql);
@@ -136,14 +137,12 @@ echo "<script>document.getElementById('page-title').textContent = '" . addslashe
 <div class="modulo-reportes bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg fade-in">
 
     <?php if (!$tipo && !$cliente_id && !$producto_id): ?>
-        <!-- VISTA 1: SELECCIÓN PRINCIPAL (Default) -->
         <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-8 flex items-center border-b pb-4 border-gray-100 dark:border-gray-700">
             <i data-lucide="pie-chart" class="w-6 h-6 mr-2 text-indigo-500"></i>
             Panel de Reportes
         </h3>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <!-- Opción Clientes -->
             <a href="index.php?page=reportes&tipo=clientes" class="group relative flex flex-col items-center justify-center p-8 bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 rounded-3xl hover:border-indigo-100 dark:hover:border-indigo-900 hover:shadow-xl transition-all duration-300 overflow-hidden">
                 <div class="absolute inset-0 bg-gradient-to-br from-indigo-50 to-transparent dark:from-indigo-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 
@@ -164,7 +163,6 @@ echo "<script>document.getElementById('page-title').textContent = '" . addslashe
                 </div>
             </a>
 
-            <!-- Opción Productos -->
             <a href="index.php?page=reportes&tipo=productos" class="group relative flex flex-col items-center justify-center p-8 bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 rounded-3xl hover:border-emerald-100 dark:hover:border-emerald-900 hover:shadow-xl transition-all duration-300 overflow-hidden">
                 <div class="absolute inset-0 bg-gradient-to-br from-emerald-50 to-transparent dark:from-emerald-900/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 
@@ -187,7 +185,6 @@ echo "<script>document.getElementById('page-title').textContent = '" . addslashe
         </div>
 
     <?php elseif ($tipo && (!empty($listado) || $search)): ?>
-        <!-- VISTA 2: MOSTRAR LISTADO (Clientes o Productos) -->
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
             <a href="index.php?page=reportes" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                 <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Volver al Panel
@@ -204,8 +201,6 @@ echo "<script>document.getElementById('page-title').textContent = '" . addslashe
                     <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
                 </form>
                 
-                <button type="submit" form="search-form" class="hidden sm:inline-flex"></button> 
-
                 <a href="exportar_pdf.php?<?php echo $query_string; ?>" target="_blank" 
                     class="p-2.5 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 rounded-xl hover:text-red-600 hover:border-red-200 dark:hover:text-red-400 transition-all shadow-sm"
                     title="Exportar listado PDF">
@@ -257,7 +252,6 @@ echo "<script>document.getElementById('page-title').textContent = '" . addslashe
         <?php endif; ?>
 
     <?php elseif (!empty($detalles) || $fecha_inicio || $fecha_fin): ?>
-        <!-- VISTA 3: MOSTRAR DETALLES (de Cliente o Producto) -->
         <?php
             $url_volver = ($cliente_id) 
                 ? "index.php?page=reportes&tipo=clientes"
@@ -287,7 +281,6 @@ echo "<script>document.getElementById('page-title').textContent = '" . addslashe
             </a>
         </div>
         
-        <!-- Tarjetas de Resumen (NUEVO) -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             <div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm flex items-center">
                 <div class="p-3 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 mr-4">
@@ -322,7 +315,6 @@ echo "<script>document.getElementById('page-title').textContent = '" . addslashe
             <?php endif; ?>
         </div>
         
-        <!-- Filtros -->
         <form action="index.php" method="GET" class="mb-8 p-6 bg-gray-50 dark:bg-gray-800/40 rounded-2xl border border-gray-100 dark:border-gray-700">
             <input type="hidden" name="page" value="reportes">
             <?php if ($cliente_id): ?>
@@ -364,7 +356,6 @@ echo "<script>document.getElementById('page-title').textContent = '" . addslashe
             </div>
         </form>
 
-        <!-- Tabla de Datos -->
         <div class="overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm bg-white dark:bg-gray-800">
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left">
