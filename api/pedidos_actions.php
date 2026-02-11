@@ -11,8 +11,7 @@ const ID_ESTADO_CANCELADO = 3;
 const ID_ESTADO_EN_PREPARACION = 4;
 
 // --- CONSTANTES DE VENTAS/PAGO ---
-const ID_ESTADO_PAGADO = 2;
-const ID_METODO_PAGO_DEFAULT = 1; // Asume 'Efectivo'
+// Constantes de pago eliminadas (ID_ESTADO_PAGADO, ID_METODO_PAGO_DEFAULT) por simplificación
 
 $pdo = null;
 try {
@@ -354,9 +353,9 @@ try {
 
         $total_venta = array_sum(array_map(fn($item) => $item['cantidad_pedido'] * $item['precio_unitario'], $detalles));
        
-        $sql_venta = "INSERT INTO ventas (id_pedido, id_metodo_pago, id_estado_pago, fecha_venta, total_venta) VALUES (?, ?, ?, NOW(), ?)";
+        $sql_venta = "INSERT INTO ventas (id_pedido, fecha_venta, total_venta) VALUES (?, NOW(), ?)";
         $stmt_venta = $pdo->prepare($sql_venta);
-        $stmt_venta->execute([$id_pedido, ID_METODO_PAGO_DEFAULT, ID_ESTADO_PAGADO, $total_venta]);
+        $stmt_venta->execute([$id_pedido, $total_venta]);
         $id_venta = $pdo->lastInsertId();
 
         $detalle_venta_stmt = $pdo->prepare("INSERT INTO detalle_venta (id_venta, id_producto, cantidad, precio_unitario_venta, subtotal) VALUES (?, ?, ?, ?, ?)");

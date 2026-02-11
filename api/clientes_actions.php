@@ -73,7 +73,6 @@ $telefono_contacto = $telefono_contacto ?: null;
 
 // Limpiar Email
 $email_contacto = trim(strtolower($_POST['email_contacto'] ?? '')) ?: null;
-$id_terminos_pago_default = 1;
 
 try {
     if ($action === 'create' || $action === 'update') {
@@ -109,9 +108,9 @@ try {
 
         $pdo->beginTransaction();
         
-        $sql_cliente = "INSERT INTO clientes (nombre_razon_social, nit_ruc, ubicacion, id_terminos_pago) VALUES (?, ?, ?, ?)";
+        $sql_cliente = "INSERT INTO clientes (nombre_razon_social, nit_ruc, ubicacion) VALUES (?, ?, ?)";
         $stmt_cliente = $pdo->prepare($sql_cliente);
-        $stmt_cliente->execute([$nombre, $nit_ruc, $ubicacion, $id_terminos_pago_default]);
+        $stmt_cliente->execute([$nombre, $nit_ruc, $ubicacion]);
         $new_cliente_id = $pdo->lastInsertId();
 
         // --- 3. MANEJO ROBUSTO DE TIPOS DE CONTACTO (Case-insensitive) ---
